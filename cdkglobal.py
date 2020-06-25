@@ -3,7 +3,7 @@ from flask import Flask, request, render_template
 app = Flask(__name__)
 
 @app.route('/api')
-def calculate_discount():
+def discount_calculator():
 		customer_type  = request.args.get('customer_type', '')
 		total_amount = int(request.args.get('total_amount', 0))
 		discount = 0
@@ -11,30 +11,33 @@ def calculate_discount():
 		if customer_type == 'Regular':
 			if total_amount > 5000:
 				if total_amount >= 10000:
-					discount += (10000-5000)*(10/100)
+					discount += cal_disc(10000,5000,10)
 				else:
-					discount += (total_amount-5000)*(10/100)
+					discount += cal_disc(total_amount,5000,10)
 			if total_amount > 10000:
-				discount += (total_amount-10000)*(20/100)
+				discount += cal_disc(total_amount,10000,20)
 		elif customer_type == 'Premium':
 			if total_amount < 4000:
-				discount += total_amount*(10/100)
+				discount += cal_disc(total_amount,0,10)
 			else:
-				discount += 4000*(10/100)  
+				discount += cal_disc(4000,0,10) 
 			if total_amount > 4000:
 				if total_amount >= 8000:
-					discount += (8000-4000)*(15/100)
+					discount += cal_disc(8000,4000,15)
 				else:
-					discount += (total_amount-4000)*(15/100)
+					discount += cal_disc(total_amount,4000,15)
 			if total_amount > 8000:
 				if total_amount >= 12000:
-					discount += (12000-8000)*(20/100)
+					discount += cal_disc(12000,8000,20)
 				else:
-					discount += (total_amount-8000)*(20/100)
+					discount += cal_disc(total_amount,8000,20)
 			if total_amount > 12000:
-				discount += (total_amount-12000)*(30/100)
+				discount += cal_disc(total_amount,12000,30)
 		return render_template('output.html', total_amount=total_amount, 
 								pay_amount=total_amount-discount, discount=discount)
+
+def cal_disc(total_amount, slab_min, per):
+	return (total_amount-slab_min)*(per/100)
 
 app.run(debug=True)
 
